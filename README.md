@@ -13,4 +13,5 @@ Die ist die erste Version der Fahrspurerkennung
 
 
 Vielen Dank an die Udemy-Mentoren für die Lernressourcen.
+Thank you to the Udemymentors for the learning resources
 
