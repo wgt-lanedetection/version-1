@@ -46,12 +46,12 @@ def display_lines(img,lines):
                 cv2.line(line_image,(x1,y1),(x2,y2),(255,0,0),10)
     return line_image
 
-def region_of_interest(canny):
+def region_of_interest(canny):  #define RIO
     height = canny.shape[0]
     width = canny.shape[1]
     mask = np.zeros_like(canny)
 
-    triangle = np.array([[
+    triangle = np.array([[   #RIO Triangle
     (200, height),
     (550, 250),
     (1100, height),]], np.int32)
