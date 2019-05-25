@@ -61,16 +61,6 @@ def region_of_interest(canny):  #define RIO
     return masked_image
 
 
-# image = cv2.imread('test_image.jpg')
-# lane_image = np.copy(image)
-# lane_canny = canny(lane_image)
-# cropped_canny = region_of_interest(lane_canny)
-# lines = cv2.HoughLinesP(cropped_canny, 2, np.pi/180, 100, np.array([]), minLineLength=40,maxLineGap=5)
-# averaged_lines = average_slope_intercept(image, lines)
-# line_image = display_lines(lane_image, averaged_lines)
-# combo_image = cv2.addWeighted(lane_image, 0.8, line_image, 1, 0)
-
-#
 cap = cv2.VideoCapture("test2.mp4")
 while(cap.isOpened()):
     _, frame = cap.read()
