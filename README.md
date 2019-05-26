@@ -1,8 +1,9 @@
 ### version-1: Softwaremodul zur Fahrspurerkennung in Videoechtzeit für autonome Modellfahrzeuge
 * * * *
 ##### Fahrspurerkennung durch eine Filterpipeline
-----
+
 Die ist die erste Version der Fahrspurerkennung
+
 ![](pipeline.png)
 
 1. Einzelnes Frame wird entnommen und der "Pipline" zugeführt
