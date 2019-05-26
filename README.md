@@ -13,6 +13,9 @@ Die ist die erste Version der Fahrspurerkennung
 - 7. Erstellen des Ausgangs Bild: Hough Linien + Eingangsbild
 
 
+
+Übersetzt mit www.DeepL.com/Translator
+
 ### Requirements 
 - numpy
 - matplotlib
