@@ -2,7 +2,7 @@
 ## Basic Lane Detection - Filter Pipeline
 ----
 Die ist die erste Version der Fahrspurerkennung
-
+![](pipeline.png)
 
 - 1. Einzelnes Frame wird entnommen und der "Pipline" zugeführt
 - 2. Umwandeln vom Farbbild in Graustufen Bild (Grayscale)
