@@ -1,5 +1,6 @@
-# version-1
-## Basic Lane Detection - Filter Pipeline
+### version-1: Softwaremodul zur Fahrspurerkennung in Videoechtzeit für autonome Modellfahrzeuge
+* * * *
+##### Fahrspurerkennung durch eine Filterpipeline
 ----
 Die ist die erste Version der Fahrspurerkennung
 ![](pipeline.png)
