@@ -4,19 +4,21 @@ import cv2
 import time
 import numpy as np
 
-camera = PiCamera()
-camera.resolution = (320, 240)
-camera.framerate = 30
-rawCapture = PiRGBArray(camera, size=(320, 240))
+framesize = 1280, 720
 
-display_window = cv2.namedWindow("Version1")
+camera = PiCamera()
+camera.resolution = (framesize)
+camera.framerate = 30
+
+rawCapture = PiRGBArray(camera, size=(framesize))
+display_window = cv2.namedWindow("Version 1")
 time.sleep(1)
 
 
 def make_points(image, line):
     slope, intercept = line
-    y1 = int(image.shape[0])# bottom of the image
-    y2 = int(y1*3/5)         # slightly lower than the middle
+    y1 = int(image.shape[0])    # bottom of the image
+    y2 = int(y1*3/5)            # slightly lower than the middle
     x1 = int((y1 - intercept)/slope)
     x2 = int((y2 - intercept)/slope)
     return [[x1, y1, x2, y2]]
@@ -31,7 +33,7 @@ def average_slope_intercept(image, lines):
             fit = np.polyfit((x1,x2), (y1,y2), 1)
             slope = fit[0]
             intercept = fit[1]
-            if slope < 0: # y is reversed in image
+            if slope < 0:       # y is reversed in image
                 left_fit.append((slope, intercept))
             else:
                 right_fit.append((slope, intercept))
@@ -75,14 +77,16 @@ def region_of_interest(canny):  #define RIO
 
 
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-    canny_image = canny(frame)  #Canny Filter on single frames
+
+    image1 = frame.array
+
+    canny_image = canny(image1)  #Canny Filter on single frames
     cropped_canny = region_of_interest(canny_image) #Canny Filter with RIO: Street + RIO
     lines = cv2.HoughLinesP(cropped_canny, 2, np.pi/180, 100, np.array([]), minLineLength=40,maxLineGap=5)
-    averaged_lines = average_slope_intercept(frame, lines) #Draw blue lines
-    line_image = display_lines(frame, averaged_lines)
-    combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1) #Lines + Street
-    cv2.imshow("result", combo_image)
-
+    averaged_lines = average_slope_intercept(image1, lines) #Draw blue lines
+    line_image = display_lines(image1, averaged_lines)
+    combo_image = cv2.addWeighted(image1, 0.8, line_image, 1, 1) #Lines + Street
+    cv2.imshow("Version 1", combo_image)
     key = cv2.waitKey(1)
 
     rawCapture.truncate(0)
