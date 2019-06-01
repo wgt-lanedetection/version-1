@@ -15,6 +15,18 @@ display_window = cv2.namedWindow("Version 1")
 time.sleep(1)
 
 
+def undistort(img):
+    cam_mtx = np.array([    
+                         [168.12940519,   0,           162.07114665],
+                         [  0.0,         168.27516637 ,100.44213185],
+                         [  0,            0,           1           ]
+                         ])
+
+    cam_dst = np.array([-0.34068385,  0.14733747,  0.00066994,  0.00060006, -0.03411863])
+    img = cv2.undistort(img, cam_mtx, cam_dst, None, cam_mtx)
+    return img
+
+
 def make_points(image, line):
     slope, intercept = line
     y1 = int(image.shape[0])    # bottom of the image
@@ -79,6 +91,7 @@ def region_of_interest(canny):  #define RIO
 for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
 
     image1 = frame.array
+    image1 = undistort1(image1)
 
     canny_image = canny(image1)  #Canny Filter on single frames
     cropped_canny = region_of_interest(canny_image) #Canny Filter with RIO: Street + RIO
