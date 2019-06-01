@@ -14,18 +14,26 @@ rawCapture = PiRGBArray(camera, size=(framesize))
 display_window = cv2.namedWindow("Version 1")
 time.sleep(1)
 
+point_ul =   150,700
+point_o  =   600,100
+point_ur =  1150,700
 
-def undistort(img):
-    cam_mtx = np.array([    
-                         [168.12940519,   0,           162.07114665],
-                         [  0.0,         168.27516637 ,100.44213185],
-                         [  0,            0,           1           ]
-                         ])
+#def undistort(img):
+#    cam_mtx = np.array([    
+#                         [168.12940519,   0,           162.07114665],
+#                         [  0.0,         168.27516637 ,100.44213185],
+#                         [  0,            0,           1           ]
+#                         ])
+#
+#    cam_dst = np.array([-0.34068385,  0.14733747,  0.00066994,  0.00060006, -0.03411863])
+#    img = cv2.undistort(img, cam_mtx, cam_dst, None, cam_mtx)
+#    return img
 
-    cam_dst = np.array([-0.34068385,  0.14733747,  0.00066994,  0.00060006, -0.03411863])
-    img = cv2.undistort(img, cam_mtx, cam_dst, None, cam_mtx)
+def drawpoints(img):
+    img = cv2.circle(img,(point_ul),10,(0,0,255)) #Punkt unten Links
+    img = cv2.circle(img,(point_o) ,10,(0,0,255)) #Punkt oben
+    img = cv2.circle(img,(point_ur),10,(0,0,255)) #Punkt unten rechts
     return img
-
 
 def make_points(image, line):
     slope, intercept = line
@@ -78,9 +86,9 @@ def region_of_interest(canny):  #define RIO
     mask = np.zeros_like(canny)
 
     triangle = np.array([[   #RIO Triangle
-    (200, height),
-    (550, 250),
-    (1100, height),]], np.int32)
+    (point_ul),
+    (point_o ),
+    (point_ur),]], np.int32)
 
     cv2.fillPoly(mask, triangle, 255)
     masked_image = cv2.bitwise_and(canny, mask)
@@ -88,10 +96,11 @@ def region_of_interest(canny):  #define RIO
 
 
 
-for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
 
     image1 = frame.array
-    image1 = undistort1(image1)
+    image1 = drawpoints(image1)
+#   image1 = undistort(image1)
 
     canny_image = canny(image1)  #Canny Filter on single frames
     cropped_canny = region_of_interest(canny_image) #Canny Filter with RIO: Street + RIO
@@ -101,7 +110,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     combo_image = cv2.addWeighted(image1, 0.8, line_image, 1, 1) #Lines + Street
     cv2.imshow("Version 1", combo_image)
     key = cv2.waitKey(1)
-
+    #print(height)
     rawCapture.truncate(0)
     if key == 27:
         camera.close()
