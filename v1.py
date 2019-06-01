@@ -19,7 +19,6 @@ cv2.setWindowProperty("Version 1", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREE
 cv2.resizeWindow("Version 1", 1020, 980)
 time.sleep(1)
 
-
 point_ul =   150,700
 point_o  =   600,100
 point_ur =  1150,700
