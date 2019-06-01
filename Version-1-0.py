@@ -4,13 +4,14 @@ import cv2
 import time
 import numpy as np
 
-framesize = 1280, 720
+frame_width = 1280
+frame_height = 720
 
 camera = PiCamera()
-camera.resolution = (framesize)
+camera.resolution = (frame_width, frame_height)
 camera.framerate = 30
 
-rawCapture = PiRGBArray(camera, size=(framesize))
+rawCapture = PiRGBArray(camera, size=(frame_width, frame_height))
 display_window = cv2.namedWindow("Version 1")
 time.sleep(1)
 
@@ -18,17 +19,20 @@ point_ul =   150,700
 point_o  =   600,100
 point_ur =  1150,700
 
-#def undistort(img):
-#    cam_mtx = np.array([    
-#                         [168.12940519,   0,           162.07114665],
-#                         [  0.0,         168.27516637 ,100.44213185],
-#                         [  0,            0,           1           ]
-#                         ])
-#
-#    cam_dst = np.array([-0.34068385,  0.14733747,  0.00066994,  0.00060006, -0.03411863])
-#    img = cv2.undistort(img, cam_mtx, cam_dst, None, cam_mtx)
-#    return img
+cam_mtx = np.array([    
+                    [168.12940519,   0,           162.07114665],
+                    [  0.0,         168.27516637 ,100.44213185],
+                    [  0,            0,           1           ]
+                  ])
 
+cam_dst = np.array([-0.34068385,  0.14733747,  0.00066994,  0.00060006, -0.03411863])
+
+# Undisttort Image
+def undistort(img):
+    img = cv2.undistort(img, cam_mtx, cam_dst, None, cam_mtx)
+    return img
+
+# Draw Points to mark the RIO
 def drawpoints(img):
     img = cv2.circle(img,(point_ul),10,(0,0,255)) #Punkt unten Links
     img = cv2.circle(img,(point_o) ,10,(0,0,255)) #Punkt oben
