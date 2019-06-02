@@ -9,22 +9,24 @@ import time
 
 # Parameters for the Camera
 camera = PiCamera()
-camera.resolution = (400,225)
+camera.resolution = (960,544)
+#camera.resolution = (480,272)
 camera.framerate = 10
 #camera.iso = 800
 #camera.saturation = 35
 #camera.sharpness = 10
 camera.video_stabilization = True
-rawCapture = PiRGBArray(camera, size = (400,225))
+rawCapture = PiRGBArray(camera, size = (960,544))
+#rawCapture = PiRGBArray(camera, size = (480,272))
 cv2.namedWindow("Version 1")
 cv2.setWindowProperty("Version 1", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-cv2.resizeWindow("Version 1", 1020, 980)
+#cv2.resizeWindow("Version 1", 1020, 980)
 time.sleep(1)
 
 #Parameters for the RIO
-point_ul =   150,700
-point_o  =   600,100
-point_ur =  1150,700
+point_ul =   150,500
+point_o  =   450,100
+point_ur =   750,500
 
 #Parameters for Camera Calibration
 
@@ -71,9 +73,8 @@ def color_filter(image):
 
     return masked
 
-filtered_img = list(map(color_filter, imageList))
-
-display_images(filtered_img)
+#filtered_img = list(map(color_filter, imageList))
+#display_images(filtered_img)
 
 
 #-------------------------------------------#
@@ -165,7 +166,7 @@ def draw_lines(img, lines, thickness=5):
 
         pts = np.array([[left_line_x1, int(0.65*img.shape[0])],[left_line_x2, int(img.shape[0])],[right_line_x2, int(img.shape[0])],[right_line_x1, int(0.65*img.shape[0])]], np.int32)
         pts = pts.reshape((-1,1,2))
-        cv2.fillPoly(img,[pts],(0,0,255))      
+        cv2.fillPoly(img,[pts],(12,201,137))      
         
         
         cv2.line(img, (left_line_x1, int(0.65*img.shape[0])), (left_line_x2, int(img.shape[0])), leftColor, 10)
@@ -218,21 +219,24 @@ def weightSum(input_set):
 
 for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
 
-    image1 = frame.array
-    image1 = drawpoints(image1)
+   image1 = frame.array
+   image1 = drawpoints(image1)
 #   image1 = undistort(image1)
 
-   interest = roi(image1)
+#   cv2.imshow("Version 1", image1)
+   interest  = roi(image1)
    filterimg = color_filter(interest)
    canny = cv2.Canny(grayscale(filterimg), 50, 120)
    myline = hough_lines(canny, 1, np.pi/180, 10, 20, 5)
-   weighted_img = cv2.addWeighted(myline, 1, image, 0.8, 0)
+   weighted_img = cv2.addWeighted(myline, 0.8, image1, 0.8, 0)
+   
    cv2.imshow("Version 1", weighted_img)
-    if cv.waitKey(10) & 0xFF == ord('q'):
-        break
+   
+   key = cv2.waitKey(1)
 
-    rawCapture.truncate(0)
-    if key == 27:
-        camera.close()
-        cv2.destroyAllWindows()
-        break
+   rawCapture.truncate(0)
+   if key == 27:
+      camera.close()
+      cv2.destroyAllWindows()
+      break
+
