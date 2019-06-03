@@ -2,11 +2,11 @@
 * * * *
 ##### Fahrspurerkennung durch eine Filterpipeline
 
-![](Version1.png)
+![](/images/Version1.png)
 
 Die ist die erste Version der Fahrspurerkennung
 
-![](pipeline.png)
+![](images/pipeline.png)
 
 1. Einzelnes Frame wird entnommen und der "Pipline" zugeführt
 2. Umwandeln vom Farbbild in Graustufen Bild (Grayscale)
