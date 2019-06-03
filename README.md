@@ -2,7 +2,7 @@
 * * * *
 ##### Fahrspurerkennung durch eine Filterpipeline
 
-![](images/Version1.png)
+![](images/Version_1.png)
 
 Die ist die erste Version der Fahrspurerkennung
 
