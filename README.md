@@ -21,7 +21,7 @@ Diese Methode im ersten Ansatz scheint anst√§ndig zu funktionieren. Zumindest f√
 
 ### Requirements 
 - numpy
-- matplotlib
+- PiCamera
 - opencv
 - python3 
 
