@@ -7,9 +7,9 @@ import cv2
 import time
 
 
-#Set frame size
-#frame_x = 960
-#frame_y = 544
+#Set Frame Size
+#frame_x = 416
+#frame_y = 256
 #---
 frame_x = 640
 frame_y = 368
@@ -18,29 +18,30 @@ frame_y = 368
 # Parameters for the Camera
 camera = PiCamera()
 camera.resolution = (frame_x,frame_y)
-camera.framerate = 20
+camera.framerate = 15
 camera.iso = 800
 camera.saturation = 35
 camera.sharpness = 10
 camera.video_stabilization = True
-
 rawCapture = PiRGBArray(camera, size = (frame_x,frame_y))
+#rawCapture = PiRGBArray(camera, size = (480,272))
 cv2.namedWindow("Version 1")
 cv2.setWindowProperty("Version 1", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+#cv2.resizeWindow("Version 1", 960, 544)
 time.sleep(1)
 
 #Parameters for the ROI
-point_ul =    int(0) , int(frame_y)                     #Point buttom left
-point_ur =    int(frame_x), int(frame_y)                #Point buttom right
-point_or  =   int(frame_x * 0.65) , int(frame_y *0.6)   #Point top right
-point_ol  =   int(frame_x * 0.35) , int(frame_y * 0.6)  #Point top left
+point_ul =    int(0) , int(frame_y)                     #unten links
+point_ur =    int(frame_x), int(frame_y)                #unten rechts
+point_or  =   int(frame_x * 0.65) , int(frame_y *0.6)   #oben  rechts
+point_ol  =   int(frame_x * 0.35) , int(frame_y * 0.6)  #oben links
 
 # Parameter for Text
 font              = cv2.FONT_HERSHEY_SIMPLEX
-LeftCornerText    = (10,30)
-fontScale         = 1
-fontColor         = (255,255,255) #white
-lineType          = 2
+LeftCornerText    = (10,20)
+fontScale         = 0.5
+fontColor         = (255,255,255)
+lineType          = 1
 
 #Parameters for Camera Calibration
 #def undistort(img):
@@ -54,15 +55,13 @@ lineType          = 2
 #    img = cv2.undistort(img, cam_mtx, cam_dst, None, cam_mtx)
 #    return img
 
-#Draw points to mark the Region of interest
 def drawpoints(img):
-    img = cv2.circle(img,(point_ul) ,5,(0,0,255))    #Point buttom left
-    img = cv2.circle(img,(point_ol) ,5,(0,0,255),-1) #Point top left
-    img = cv2.circle(img,(point_or) ,5,(0,0,255),-1) #Point top right
-    img = cv2.circle(img,(point_ur) ,5,(0,0,255))    #Point buttom right
+    img = cv2.circle(img,(point_ul) ,5,(0,0,255)) #Punkt unten Links
+    img = cv2.circle(img,(point_ol) ,5,(0,0,255),-1) #Punkt oben Links
+    img = cv2.circle(img,(point_or) ,5,(0,0,255),-1) #Punkt oben Rechts
+    img = cv2.circle(img,(point_ur) ,5,(0,0,255)) #Punkt unten rechts
     return img
 
-#Write fps (frames per second)
 def wirteText(img, c_fps):
     text = "fps:" + str(int(c_fps))
     cv2.putText(img, text , 
@@ -73,13 +72,13 @@ def wirteText(img, c_fps):
         lineType)
     return img
 
-#---------------------------------------------#
-#-----------                      ------------#
-#----------- Pipeline starts here! -----------#
-#-----------                      ------------#
-#---------------------------------------------#
+#-------------------------------------------------------------------------------------#
 
-# Color Filtering: Filter Yellow and White Color
+#PIPLINE STARTS HERE
+
+#-------------------------------------------#
+
+# Color Filtering
 def color_filter(image):
     #convert to HLS to mask based on HLS
     hls = cv2.cvtColor(image, cv2.COLOR_RGB2HLS)
@@ -100,24 +99,24 @@ def color_filter(image):
 
 #-------------------------------------------#
 
-# Region of interest
+# REGION OF INTEREST 
 def roi(img):
     x = int(img.shape[1])
     y = int(img.shape[0])
    
-#    shape = np.array([
-#                      [point_ul], 
-#                      [point_ur], 
-#                      [point_or], 
-#                      [point_ol]
-#                      ])
-
     shape = np.array([
-                      [int(0), int(y)],    #
-                      [int(x), int(y)], 
-                      [int(0.65*x), int(0.6*y)], 
-                      [int(0.35*x), int(0.6*y)]
+                      [point_ul], 
+                      [point_ur], 
+                      [point_or], 
+                      [point_ol]
                       ])
+
+#    shape = np.array([
+#                      [int(0), int(y)], 
+#                      [int(x), int(y)], 
+#                      [int(0.65*x), int(0.6*y)], 
+#                      [int(0.35*x), int(0.6*y)]
+#                      ])
 
     #define a numpy array with the dimensions of img, but comprised of zeros
     mask = np.zeros_like(img)
@@ -234,23 +233,24 @@ def weightSum(input_set):
 for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=True):
 
    image1 = frame.array
-   start = time.time() #start timer for fps calculation
+   start = time.time()            #start timer for fps calculation
    image1 = drawpoints(image1)
 #   image1 = undistort(image1)
+#   cv2.imshow("Version 1", image1)
 
    interest  = roi(image1)
    filterimg = color_filter(interest)
    canny = cv2.Canny(grayscale(filterimg), 50, 120)
    myline = hough_lines(canny, 1, np.pi/180, 10, 20, 5)
    weighted_img = cv2.addWeighted(myline, 0.5, image1, 0.8, 0)
-    
-   end = time.time()                #end timer for fps calculation
+   end = time.time()               #end timer for fps calculation
    c_fps = (1 / (end - start))      #calculate fps in second
    final = wirteText(weighted_img, c_fps)
-
+   final = cv2.resize(final, (int(frame_x *2), int(frame_y*2)))
    cv2.imshow("Version 1", final)
    
    key = cv2.waitKey(1)
+
    rawCapture.truncate(0)
    if key == 27:
       camera.close()
