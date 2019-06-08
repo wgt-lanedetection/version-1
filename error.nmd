@@ -1,0 +1,16 @@
+error
+
+/usr/local/lib/python3.5/dist-packages/numpy/core/fromnumeric.py:3118: RuntimeWarning: Mean of empty slice.
+  out=out, **kwargs)
+/usr/local/lib/python3.5/dist-packages/numpy/core/_methods.py:85: RuntimeWarning: invalid value encountered in double_scalars
+  ret = ret.dtype.type(ret / rcount)
+version1_for_PI.py:160: RuntimeWarning: divide by zero encountered in int_scalars
+  slope = (y1-y2)/(x1-x2)
+Traceback (most recent call last):
+  File "/home/pi/Desktop/version-1/version1_for_PI.py", line 244, in <module>
+    myline = hough_lines(canny, 1, np.pi/180, 10, 20, 5)
+  File "/home/pi/Desktop/version-1/version1_for_PI.py", line 209, in hough_lines
+    draw_lines(line_img, lines)
+  File "/home/pi/Desktop/version-1/version1_for_PI.py", line 158, in draw_lines
+    for line in lines:
+TypeError: 'NoneType' object is not iterable
