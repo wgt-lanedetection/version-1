@@ -34,7 +34,7 @@ time.sleep(1)
 point_ul =    int(0) , int(frame_y)                     #unten links
 point_ur =    int(frame_x), int(frame_y)                #unten rechts
 point_or  =   int(frame_x * 0.65) , int(frame_y *0.6)   #oben  rechts
-point_ol  =   int(frame_x * 0.35) , int(frame_y * 0.6)  #oben links
+point_ol  =   int(frame_x * 0.30) , int(frame_y * 0.6)  #oben links
 
 # Parameter for Text
 font              = cv2.FONT_HERSHEY_SIMPLEX
@@ -141,8 +141,11 @@ def roi(img):
 def grayscale(img):
     return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
 
-def canny(img):
-    return cv2.Canny(grayscale(img), 50, 120)
+def canny1(img):
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    img = cv2.GaussianBlur(img,(5,5),0)
+    img = cv2.Canny(img, 80,150)
+    return img
 
 #-------------------------------------------#
 
@@ -204,10 +207,14 @@ def hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap):
     """
     `img` should be the output of a Canny transform.
     """
-    lines = cv2.HoughLinesP(img, rho, theta, threshold, np.array([]), minLineLength=min_line_len, maxLineGap=max_line_gap)
-    line_img = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
-    draw_lines(line_img, lines)
-    return line_img
+    try:
+        lines = cv2.HoughLinesP(img, rho, theta, threshold, np.array([]), minLineLength=min_line_len, maxLineGap=max_line_gap)
+        line_img = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
+        draw_lines(line_img, lines)
+        return line_img
+    except ValueError:
+            #I keep getting errors for some reason, so I put this here. Idk if the error still persists.
+        pass        
 
 def linedetect(img):
     return hough_lines(img, 1, np.pi/180, 10, 20, 100)
@@ -240,9 +247,13 @@ for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=
 
    interest  = roi(image1)
    filterimg = color_filter(interest)
-   canny = cv2.Canny(grayscale(filterimg), 50, 120)
+#   canny = cv2.Canny(grayscale(filterimg), 50, 120)
+   canny = canny1(filterimg)
+#   cv2.imshow("Version 1", canny)
    myline = hough_lines(canny, 1, np.pi/180, 10, 20, 5)
+#   cv2.imshow("Version 1", myline)   
    weighted_img = cv2.addWeighted(myline, 0.5, image1, 0.8, 0)
+#   cv2.imshow("Version 1", weighted_img)
    end = time.time()               #end timer for fps calculation
    c_fps = (1 / (end - start))      #calculate fps in second
    final = wirteText(weighted_img, c_fps)
