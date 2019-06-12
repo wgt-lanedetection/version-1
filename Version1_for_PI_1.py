@@ -242,7 +242,7 @@ for frame in camera.capture_continuous(rawCapture, format="rgb", use_video_port=
 #   cv2.imshow("GaussianBlur", blur)  
 
    canny = cv2.Canny(blur, 80,150)
-#   cv2.imshow("Grayscaled image", canny)
+#   cv2.imshow("Canny edge detection", canny)
 
    interest  = roi(canny)
 #   cv2.imshow("Canny + ROI", interest)
