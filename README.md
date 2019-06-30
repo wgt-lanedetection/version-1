@@ -6,7 +6,7 @@
 
 Die ist die erste Version der Fahrspurerkennung
 
-![](images/pipeline.png)
+![](images/V1-Pipeline.png)
 
 1. Einzelnes Frame wird entnommen und der "Pipline" zugeführt
 2. Umwandeln vom Farbbild in Graustufen Bild (Grayscale)
